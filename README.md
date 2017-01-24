@@ -9,11 +9,11 @@ Just me messing around with some very basic crypto stuff for education.
 ```
 curl https://glide.sh/get | sh
 ```
-1. Install dependencies
+2. Install dependencies
 ```
 glide install
 ```
-1. Run build
+3. Run build
 ```
 scripts/build.sh
 ```
