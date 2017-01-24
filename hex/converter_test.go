@@ -18,7 +18,6 @@ var _ = Describe("Converter", func() {
 			Entry("basic lower case", "48656c6c6f426f62", "HelloBob"),
 			Entry("basic upper case", "48656C6C6F426F62", "HelloBob"),
 			Entry("basic mix case", "48656c6C6f426F62", "HelloBob"),
-			Entry("empty string", "", ""),
 			Entry("advanced", "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d",
 				"I'm killing your brain like a poisonous mushroom"))
 
@@ -27,6 +26,7 @@ var _ = Describe("Converter", func() {
 			Expect(err).To(HaveOccurred())
 		},
 			Entry("odd length", "1a3"),
+			Entry("empty string", ""),
 			Entry("invalid character", "1z2a"))
 	})
 
@@ -36,8 +36,12 @@ var _ = Describe("Converter", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(output).To(Equal(expectedOut))
 		},
-			Entry("empty string", "", ""),
 			Entry("basic", "HelloBob", "48656c6c6f426f62"),
 			Entry("advanced", "I'm killing your brain like a poisonous mushroom", "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"))
+	})
+
+	It("string to hex string checks for valid input", func() {
+		_, err := StringToHexString("")
+		Expect(err).To(HaveOccurred())
 	})
 })

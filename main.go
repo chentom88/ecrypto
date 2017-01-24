@@ -12,6 +12,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Version = "0.0.1"
+	app.Usage = "A basic application for simple crypto"
 
 	app.Commands = []cli.Command{
 		{
