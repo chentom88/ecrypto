@@ -37,6 +37,37 @@ func StringToHexString(input string) (string, error) {
 	return string(hexString), nil
 }
 
+func FixedXOR(input1, input2 string) (string, error) {
+	inputLen1 := len(input1)
+	inputLen2 := len(input2)
+
+	if inputLen1 == 0 || inputLen2 == 0 || (inputLen1 != inputLen2) {
+		return "", errors.New("invalid input")
+	}
+
+	if !validateHexString(input1) || !validateHexString(input2) {
+		return "", errors.New("invalid hex strings")
+	}
+
+	converted1, err := HexStringToString(input1)
+	if err != nil {
+		return "", err
+	}
+
+	converted2, err := HexStringToString(input2)
+	if err != nil {
+		return "", err
+	}
+
+	convertedLen := len(converted1)
+	result := make([]byte, convertedLen)
+	for i := 0; i < convertedLen; i++ {
+		result[i] = converted1[i] ^ converted2[i]
+	}
+
+	return StringToHexString(string(result))
+}
+
 func validateHexString(input string) bool {
 	if len(input)%2 != 0 {
 		return false

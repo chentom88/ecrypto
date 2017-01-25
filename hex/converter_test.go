@@ -38,10 +38,22 @@ var _ = Describe("Converter", func() {
 		},
 			Entry("basic", "HelloBob", "48656c6c6f426f62"),
 			Entry("advanced", "I'm killing your brain like a poisonous mushroom", "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"))
+
+		It("checks for valid input", func() {
+			_, err := StringToHexString("")
+			Expect(err).To(HaveOccurred())
+		})
 	})
 
-	It("string to hex string checks for valid input", func() {
-		_, err := StringToHexString("")
-		Expect(err).To(HaveOccurred())
+	Describe("Fixed XOR", func() {
+		It("can xor two hex strings of same length", func() {
+			input1 := "1c0111001f010100061a024b53535009181c"
+			input2 := "686974207468652062756c6c277320657965"
+			expected := "746865206b696420646f6e277420706c6179"
+
+			actual, err := FixedXOR(input1, input2)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(actual).To(Equal(expected))
+		})
 	})
 })

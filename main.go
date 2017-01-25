@@ -24,28 +24,28 @@ func main() {
 					Name:  "encode",
 					Usage: "encode string to base64",
 					Action: func(c *cli.Context) error {
-						return runBasicCommand(base64.Encode, c.Args().First())
+						return runBasic(base64.Encode, c.Args().First())
 					},
 				},
 				{
 					Name:  "decode",
 					Usage: "decode base64 to string",
 					Action: func(c *cli.Context) error {
-						return runBasicCommand(base64.Decode, c.Args().First())
+						return runBasic(base64.Decode, c.Args().First())
 					},
 				},
 				{
 					Name:  "encode_hex",
 					Usage: "encode hex string to base64",
 					Action: func(c *cli.Context) error {
-						return runBasicCommand(base64.EncodeHex, c.Args().First())
+						return runBasic(base64.EncodeHex, c.Args().First())
 					},
 				},
 				{
 					Name:  "decode_hex",
 					Usage: "decode base64 to hex string",
 					Action: func(c *cli.Context) error {
-						return runBasicCommand(base64.DecodeToHex, c.Args().First())
+						return runBasic(base64.DecodeToHex, c.Args().First())
 					},
 				},
 			},
@@ -59,14 +59,26 @@ func main() {
 					Name:  "encode",
 					Usage: "encode string to hex string",
 					Action: func(c *cli.Context) error {
-						return runBasicCommand(hex.StringToHexString, c.Args().First())
+						return runBasic(hex.StringToHexString, c.Args().First())
 					},
 				},
 				{
 					Name:  "decode",
 					Usage: "decode hex string to string",
 					Action: func(c *cli.Context) error {
-						return runBasicCommand(hex.HexStringToString, c.Args().First())
+						return runBasic(hex.HexStringToString, c.Args().First())
+					},
+				},
+				{
+					Name:  "fixedxor",
+					Usage: "perform a fixed xor on two hex strings of equivalent length",
+					Action: func(c *cli.Context) error {
+						output, err := hex.FixedXOR(c.Args().First(), c.Args().Get(1))
+						if err == nil {
+							fmt.Println(output)
+						}
+
+						return err
 					},
 				},
 			},
@@ -76,7 +88,7 @@ func main() {
 	app.Run(os.Args)
 }
 
-func runBasicCommand(operation func(string) (string, error), input string) error {
+func runBasic(operation func(string) (string, error), input string) error {
 	output, err := operation(input)
 	if err == nil {
 		fmt.Println(output)

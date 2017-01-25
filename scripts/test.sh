@@ -2,5 +2,5 @@
 
 set -ex
 
-ginkgo base64 -r
-ginkgo hex -r
+ginkgo base64
+ginkgo hex
