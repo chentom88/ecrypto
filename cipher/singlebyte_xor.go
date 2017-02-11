@@ -1,6 +1,19 @@
 package cipher
 
-import "github.com/chentom88/ecrypto/hex"
+import (
+	"sort"
+
+	"github.com/chentom88/ecrypto/hex"
+)
+
+func EncodeSingleByteXORString(input string, key string) (string, error) {
+	if len(input) == 0 {
+		return "", nil
+	}
+
+	resultByte := singleByteXOR(input, key[0])
+	return hex.StringToHexString(string(resultByte))
+}
 
 func EncodeSingleByteXOR(hexInput string, key byte) ([]byte, error) {
 	input, err := hex.HexStringToString(hexInput)
@@ -8,17 +21,11 @@ func EncodeSingleByteXOR(hexInput string, key byte) ([]byte, error) {
 		return nil, err
 	}
 
-	result := make([]byte, len(input))
-
-	for i, inputByte := range input {
-		result[i] = byte(inputByte) ^ key
-	}
-
-	return result, nil
+	return singleByteXOR(input, key), nil
 }
 
-func CrackSingleByteXOR(hexInput string) ([]*sbxResult, error) {
-	results := make([]*sbxResult, 255)
+func CrackSingleByteXOR(hexInput string) ([]*SbxResult, error) {
+	results := make([]*SbxResult, 255)
 
 	for i := 0; i < 255; i++ {
 		key := byte(i + 1)
@@ -27,23 +34,37 @@ func CrackSingleByteXOR(hexInput string) ([]*sbxResult, error) {
 			continue
 		}
 
-		results[i] = &sbxResult{
-			decrypted: string(tempResult),
-			key:       key,
+		results[i] = &SbxResult{
+			Decrypted: string(tempResult),
+			Key:       key,
+			Ranking:   0.0,
 		}
 
-		results[i].ranking = scoreResult(tempResult)
+		results[i].Ranking, _ = scoreLangString(string(tempResult), &englishInfo)
 	}
 
-	return results, nil
+	sort.Sort(byScore(results))
+	return results[:5], nil
 }
 
-func scoreResult(input []byte) float64 {
-	return 100.0
+func singleByteXOR(input string, key byte) []byte {
+	result := make([]byte, len(input))
+
+	for i, inputByte := range input {
+		result[i] = byte(inputByte) ^ key
+	}
+
+	return result
 }
 
-type sbxResult struct {
-	decrypted string
-	ranking   float64
-	key       byte
+type SbxResult struct {
+	Decrypted string
+	Ranking   float64
+	Key       byte
 }
+
+type byScore []*SbxResult
+
+func (s byScore) Len() int           { return len(s) }
+func (s byScore) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s byScore) Less(i, j int) bool { return s[i].Ranking > s[j].Ranking }

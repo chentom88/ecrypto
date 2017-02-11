@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/chentom88/ecrypto/base64"
+	"github.com/chentom88/ecrypto/cipher"
 	"github.com/chentom88/ecrypto/hex"
 	"github.com/urfave/cli"
 )
@@ -74,6 +75,36 @@ func main() {
 					Usage: "perform a fixed xor on two hex strings of equivalent length",
 					Action: func(c *cli.Context) error {
 						output, err := hex.FixedXOR(c.Args().First(), c.Args().Get(1))
+						if err == nil {
+							fmt.Println(output)
+						}
+
+						return err
+					},
+				},
+			},
+		},
+		{
+			Name:    "sbxor",
+			Aliases: []string{"sx"},
+			Usage:   "single byte xor",
+			Subcommands: []cli.Command{
+				{
+					Name:  "encrypt",
+					Usage: "encode string to hex string and then encrypt with single byte",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "text",
+							Usage: "the text to encrypt",
+						},
+						cli.StringFlag{
+							Name:  "key",
+							Value: "A",
+							Usage: "the key to use for encryption, only the first byte will be used",
+						},
+					},
+					Action: func(c *cli.Context) error {
+						output, err := cipher.EncodeSingleByteXORString(c.String("text"), c.String("key"))
 						if err == nil {
 							fmt.Println(output)
 						}
